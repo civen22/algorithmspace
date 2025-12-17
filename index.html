@@ -4,47 +4,31 @@
   <meta charset="UTF-8" />
   <title>AlgorithmSpace AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #0a2540;
       color: white;
-      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      height: 100vh;
       text-align: center;
     }
-
-    .container {
-      max-width: 500px;
-      width: 100%;
-      padding: 20px;
-    }
-
-    h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
-    }
-
-    p {
-      opacity: 0.85;
-      margin-bottom: 30px;
-    }
-
+    h1 { font-size: 3rem; margin-bottom: 10px; }
+    p { opacity: 0.85; }
     input {
       padding: 12px;
-      width: 100%;
+      width: 280px;
       border-radius: 6px;
       border: none;
-      font-size: 16px;
+      margin-top: 20px;
     }
-
     button {
-      margin-top: 15px;
       padding: 10px 20px;
+      margin-top: 12px;
       border: none;
       border-radius: 6px;
       background: #00b4d8;
@@ -52,56 +36,42 @@
       font-weight: bold;
       cursor: pointer;
     }
-
-    #response {
-      margin-top: 20px;
-      opacity: 0.9;
-      min-height: 24px;
-    }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>AlgorithmSpace AI</h1>
-    <p>Smart systems. Real products. Strategic freedom.</p>
 
-    <input
-      id="prompt"
-      placeholder="Ask AlgorithmSpace AI..."
-    />
+  <h1>AlgorithmSpace AI</h1>
+  <p>Smart systems. Real products. Strategic freedom.</p>
 
-    <button onclick="askAI()">Ask AI</button>
+  <input id="prompt" placeholder="Ask AlgorithmSpace AI..." />
+  <button onclick="askAI()">Ask AI</button>
 
-    <p id="response"></p>
-  </div>
+  <p id="response" style="margin-top:20px;"></p>
 
   <script>
     async function askAI() {
       const prompt = document.getElementById("prompt").value;
-      const responseEl = document.getElementById("response");
-
-      if (!prompt) {
-        responseEl.innerText = "Please enter a question.";
-        return;
-      }
-
-      responseEl.innerText = "Thinking...";
+      document.getElementById("response").innerText = "Thinking...";
 
       try {
-        const res = await fetch("https://YOUR-TUNNEL-URL-HERE/api/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt })
-        });
+        const res = await fetch(
+          "https://emotions-blink-options-fold.trycloudflare.com/api/ask",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+          }
+        );
 
         const data = await res.json();
-        responseEl.innerText = data.reply || "No response from AI.";
-      } catch (error) {
-        responseEl.innerText = "AI server not connected.";
+        document.getElementById("response").innerText =
+          data.reply || "No response";
+      } catch (e) {
+        document.getElementById("response").innerText =
+          "AI server not connected.";
       }
     }
   </script>
+
 </body>
 </html>
-
