@@ -48,30 +48,33 @@
 
   <p id="response" style="margin-top:20px;"></p>
 
-  <script>
-    async function askAI() {
-      const prompt = document.getElementById("prompt").value;
-      document.getElementById("response").innerText = "Thinking...";
+ <script>
+async function askAI() {
+  const prompt = document.getElementById("prompt").value;
+  document.getElementById("response").innerText = "Thinking...";
 
-      try {
-        const res = await fetch(
-          "https://defence-msgid-heading-atm.trycloudflare.com/api/ask",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt })
-          }
-        );
+  try {
+    const res = await fetch("https://ai.algorithmspace.online/api/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
 
-        const data = await res.json();
-        document.getElementById("response").innerText =
-          data.reply || "No response";
-      } catch (e) {
-        document.getElementById("response").innerText =
-          "AI server not connected.";
-      }
+    if (!res.ok) {
+      throw new Error("Network response not ok");
     }
-  </script>
+
+    const data = await res.json();
+    document.getElementById("response").innerText = data.reply;
+  } catch (err) {
+    document.getElementById("response").innerText =
+      "AI server not connected (backend blocked or unreachable).";
+  }
+}
+</script>
+
 
 </body>
 </html>
