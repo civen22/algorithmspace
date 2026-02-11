@@ -1,19 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
-    <title>Your Title</title>
+  <meta charset="UTF-8" />
+  <title>AlgorithmSpace AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://ai.algorithmspace.online;">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0a2540;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 { 
+      font-size: 3rem; 
+      margin-bottom: 10px; 
+    }
+    p { 
+      opacity: 0.85; 
+    }
+    input {
+      padding: 12px;
+      width: 280px;
+      border-radius: 6px;
+      border: none;
+      margin-top: 20px;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: 2px solid #00b4d8;
+      outline-offset: 2px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #00b4d8;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    button:hover:not(:disabled) {
+      background-color: #0099c9;
+    }
+    button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    #response {
+      margin-top: 20px;
+      max-width: 600px;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+    .error {
+      color: #ff6b6b;
+    }
+    .success {
+      color: #51cf66;
+    }
+  </style>
 </head>
 <body>
-    <script>
-        fetch('/api/ask')
-            .then(response => response.json())
-            .then(data => {
-                const message = data.message; // changed from prompt to message
-                console.log(message);
-            });
-    </script>
+
+  <h1>AlgorithmSpace AI</h1>
+  <p>Smart systems. Real products. Strategic freedom.</p>
+
+  <input 
+    id="prompt" 
+    type="text"
+    placeholder="Ask AlgorithmSpace AI..." 
+    aria-label="AI prompt input"
+  />
+  <button id="askBtn" onclick="askAI()" aria-label="Submit prompt to AI">Ask AI</button>
+
+  <p id="response"></p>
+
+  <script>
+    const promptInput = document.getElementById("prompt");
+    const responseDisplay = document.getElementById("response");
+    const askButton = document.getElementById("askBtn");
+
+    // Allow Enter key to submit
+    promptInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && !askButton.disabled) {
+        askAI();
+      }
+    });
+
+    async function askAI() {
+      const prompt = promptInput.value.trim();
+
+      // Input validation
+      if (!prompt) {
+        responseDisplay.textContent = "Please enter a prompt.";
+        responseDisplay.className = "error";
+        return;
+      }
+
+      if (prompt.length > 5000) {
+        responseDisplay.textContent = "Prompt is too long (max 5000 characters).";
+        responseDisplay.className = "error";
+        return;
+      }
+
+      // Disable button to prevent multiple requests
+      askButton.disabled = true;
+      responseDisplay.textContent = "Thinking...";
+      responseDisplay.className = "";
+
+      try {
+        const res = await fetch("https://ai.algorithmspace.online/api/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: prompt }),
+          timeout: 30000
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status} ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        
+        if (!data.reply) {
+          throw new Error("Empty response from server");
+        }
+
+        // Use textContent to prevent XSS
+        responseDisplay.textContent = data.reply;
+        responseDisplay.className = "success";
+
+      } catch (err) {
+        // Log error for debugging
+        console.error("API Error:", err.message);
+        
+        let errorMsg = "AI server not connected (backend blocked or unreachable).";
+        
+        if (err instanceof TypeError) {
+          errorMsg = "Network error: Unable to reach the server.";
+        } else if (err.message.includes("Server error")) {
+          errorMsg = `Server error: ${err.message}`;
+        }
+        
+        responseDisplay.textContent = errorMsg;
+        responseDisplay.className = "error";
+
+      } finally {
+        // Re-enable button
+        askButton.disabled = false;
+      }
+    }
+  </script>
+
 </body>
 </html>
