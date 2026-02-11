@@ -1,80 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AlgorithmSpace AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0a2540;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    h1 { font-size: 3rem; margin-bottom: 10px; }
-    p { opacity: 0.85; }
-    input {
-      padding: 12px;
-      width: 280px;
-      border-radius: 6px;
-      border: none;
-      margin-top: 20px;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 6px;
-      background: #00b4d8;
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Space</title>
+    <script>
+        function validateInput() {
+            const inputField = document.getElementById('inputField');
+            const errorMessage = document.getElementById('errorMessage');
+            if (inputField.value.trim() === "") {
+                errorMessage.textContent = "Input cannot be empty.";
+                return false;
+            }
+            errorMessage.textContent = "";
+            return true;
+        }
+
+        function submitForm() {
+            const inputField = document.getElementById('inputField');
+            const submitButton = document.getElementById('submitButton');
+
+            if (!validateInput()) {
+                return;
+            }
+
+            submitButton.disabled = true;
+
+            // Simulating async operation
+            setTimeout(() => {
+                // Process the input here
+                alert("Input Submitted: " + inputField.value);
+                submitButton.disabled = false;
+            }, 1000);
+        }
+    </script>
 </head>
 <body>
-
-  <h1>AlgorithmSpace AI</h1>
-  <p>Smart systems. Real products. Strategic freedom.</p>
-
-  <input id="prompt" placeholder="Ask AlgorithmSpace AI..." />
-  <button onclick="askAI()">Ask AI</button>
-
-  <p id="response" style="margin-top:20px;"></p>
-
- <script>
-async function askAI() {
-  const prompt = document.getElementById("prompt").value;
-  document.getElementById("response").innerText = "Thinking...";
-
-  try {
-    const res = await fetch("https://ai.algorithmspace.online/api/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prompt })
-    });
-
-    if (!res.ok) {
-      throw new Error("Network response not ok");
-    }
-
-    const data = await res.json();
-    document.getElementById("response").innerText = data.reply;
-  } catch (err) {
-    document.getElementById("response").innerText =
-      "AI server not connected (backend blocked or unreachable).";
-  }
-}
-</script>
-
-
+    <h1>Algorithm Space</h1>
+    <div>
+        <input type="text" id="inputField" placeholder="Enter something..." />
+        <button id="submitButton" onclick="submitForm()">Submit</button>
+        <p id="errorMessage" style="color: red;"></p>
+    </div>
 </body>
 </html>
