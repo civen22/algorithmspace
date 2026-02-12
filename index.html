@@ -4,10 +4,89 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://ai.algorithmspace.online;">
-    <title>Algorithm Space</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ai.algorithmspace.online;">
+    <title>AlgorithmSpace AI</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0a2540;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        h1 { font-size: 3rem; margin-bottom: 10px; }
+        p { opacity: 0.85; }
+        input {
+            padding: 12px;
+            width: 280px;
+            border-radius: 6px;
+            border: none;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 6px;
+            background: #00b4d8;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover { background-color: #0099c9; }
+        #response { margin-top: 20px; max-width: 600px; }
+        .error { color: #ff6b6b; }
+    </style>
 </head>
 <body>
+
+    <h1>AlgorithmSpace AI</h1>
+    <p>Smart systems. Real products. Strategic freedom.</p>
+
+    <input id="prompt" type="text" placeholder="Ask AlgorithmSpace AI..." />
+    <button onclick="askAI()">Ask AI</button>
+    <p id="response"></p>
+
+    <script>
+        async function askAI() {
+            const prompt = document.getElementById("prompt").value.trim();
+            const responseDisplay = document.getElementById("response");
+            
+            if (!prompt) {
+                responseDisplay.textContent = "Please enter a prompt.";
+                responseDisplay.className = "error";
+                return;
+            }
+
+            responseDisplay.textContent = "Thinking...";
+            responseDisplay.className = "";
+
+            try {
+                const res = await fetch("https://ai.algorithmspace.online/api/ask", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: prompt })
+                });
+
+                if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+                const data = await res.json();
+                responseDisplay.textContent = data.reply || "No response";
+                
+            } catch (err) {
+                console.error(err);
+                responseDisplay.textContent = "AI server not connected (backend blocked or unreachable).";
+                responseDisplay.className = "error";
+            }
+        }
+    </script>
 
 </body>
 </html>
